@@ -79,3 +79,12 @@ test('Printable report includes all input fields, cycles and feedback with escap
 test('Provider capacity error is identified without exposing raw error payload',async()=>{
  await assert.rejects(generateSummary(payload,{apiKey:'test',fetchImpl:async()=>({ok:false,status:503,json:async()=>({error:{status:'UNAVAILABLE',message:'secret key do not expose'}})})}),e=>e.message.includes('HTTP 503 (UNAVAILABLE)')&&!e.message.includes('secret key'));
 });
+
+test('PDF chart uses readable donut, internal percentages and explicit component mapping',async()=>{
+ const {lifeCoreGraphic,reportHTML}=await import('../src/export-report.js');
+ const graphic=lifeCoreGraphic({...p,core:[6,13,0,1]});
+ for(const text of ['viewBox="0 0 320 320"','Life Path','Ability','Motivation','Birthdate','13/4','Tidak tersedia','40%','30%','20%','10%','#23594b','#a64b31','#65716a','#806321'])assert.ok(graphic.includes(text),text);
+ assert.equal((graphic.match(/<path /g)||[]).length,4);
+ const html=reportHTML(p,{text:'Feedback contoh',model:'test',generatedAt:'2026-11-27'});
+ assert.ok(html.includes('print-color-adjust:exact'));assert.ok(html.includes('class="report-core"'));assert.ok(html.includes('Feedback contoh'));
+});
