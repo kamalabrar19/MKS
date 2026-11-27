@@ -72,7 +72,7 @@ test('Gemini streaming handles split network chunks and emits text before comple
 test('Printable report includes all input fields, cycles and feedback with escaped text',async()=>{
  const {reportHTML}=await import('../src/export-report.js');
  const html=reportHTML({...p,nameParts:['Adam','Leo','Jayo']},{text:'<script>test</script>',model:'test',generatedAt:'2026-11-27'});
- for(const field of ['Nama Depan','Nama Tengah','Nama Akhir','Adam','Leo','Jayo','Personal Year','Pinnacle','Feedback AI'])assert.ok(html.includes(field));
+ for(const field of ['Nama Depan','Nama Tengah','Nama Akhir','Adam','Leo','Jayo','Personal Year','Pinnacle','Summary'])assert.ok(html.includes(field));
  assert.ok(html.includes('&lt;script&gt;'));assert.ok(!html.includes('<script>'));
 });
 

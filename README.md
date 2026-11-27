@@ -1,4 +1,4 @@
-# Ruang Angka
+# Numerology Pythagoras MKS
 
 Aplikasi React + Vite untuk eksplorasi numerologi Pythagoras berdasarkan booklet Workshop Numerology Pythagoras oleh Rudy Gunawan (101 halaman).
 
