@@ -1,0 +1,19 @@
+import {display,coreLabels,weights} from './numerology.js';
+const esc=v=>String(v??'—').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const table=(heads,rows)=>`<table><thead><tr>${heads.map(v=>`<th>${esc(v)}</th>`).join('')}</tr></thead><tbody>${rows.map(r=>`<tr>${r.map(v=>`<td>${esc(v)}</td>`).join('')}</tr>`).join('')}</tbody></table>`;
+export function reportHTML(p,result){
+ const parts=p.nameParts||[p.name,'',''];
+ return `<!doctype html><html lang="id"><head><meta charset="utf-8"><title>Ruang Angka - ${esc(p.name)}</title><style>@page{size:A4;margin:18mm}body{font:11pt/1.6 Arial;color:#263e34;margin:0}header{border-bottom:2px solid #315846;padding-bottom:14px}h1{font:28pt Georgia;margin:0}h2{font:18pt Georgia;margin:24px 0 10px;break-after:avoid}p{overflow-wrap:anywhere}small{color:#68796b}table{border-collapse:collapse;width:100%;font-size:9pt;margin:12px 0}td,th{border:1px solid #d5ded5;padding:8px;text-align:left;overflow-wrap:anywhere}th{background:#edf1e9}tr{break-inside:avoid}thead{display:table-header-group}.feedback{white-space:pre-wrap;overflow-wrap:anywhere;orphans:3;widows:3}footer{margin-top:24px;border-top:1px solid #ccd4c9;padding-top:12px;font-size:9pt}</style></head><body><header><small>INTERNAL · NUMEROLOGI PYTHAGORAS</small><h1>Ruang Angka</h1><p>Laporan refleksi pribadi</p></header>
+ <h2>Identitas dan input</h2>${table(['Input','Nilai'],[['Nama Depan',parts[0]],['Nama Tengah',parts[1]||'—'],['Nama Akhir',parts[2]||'—'],['Nama lengkap',p.name],['Tanggal lahir',p.dob],['Tahun analisis',p.year]])}
+ <h2>Life Core</h2>${table(['Komponen','Angka','Bobot'],p.core.map((n,i)=>[coreLabels[i],n?display(n):'Tidak tersedia',weights[i]+'%']))}
+ <h2>Komposisi dan Strong Number</h2>${table(['Angka','Bobot','Kemunculan'],p.distribution.filter(v=>v.weight).map(v=>[v.number,v.weight+'%',v.count]))}<p>Strong khusus: ${esc(p.specialStrong.map(display).join(', ')||'Tidak ada')}</p>
+ <h2>Indikator pendukung</h2>${table(['Indikator','Rumus','Hasil','Status'],p.indicators.map(v=>[v.label,v.formula,v.number?display(v.number):'—',v.number?(v.positive?'Selaras':'Untuk dikembangkan'):'Tidak tersedia']))}<p>Angka hadir: ${esc(p.present.join(', '))}</p><p>Karmic Lesson: ${esc(p.missing.map(v=>v.number+' ('+(v.moderate?'Moderat':'Ganas')+')').join(', ')||'Tidak ada')}</p>
+ <h2>Siklus kehidupan</h2>${table(['Siklus','Angka','Usia'],p.cycles.map((n,i)=>[['Dini','Kedewasaan','Pemenuhan'][i],n,i===0?'0–'+p.end:i===1?`${p.end+1}–${p.end+28}`:`${p.end+29}+`]))}
+ <h2>Pinnacle dan Challenge</h2>${table(['Fase','Pinnacle / usia','Challenge / usia'],p.pinnacles.map((n,i)=>[i+1,`${n} / ${p.end+1+i*9}–${p.end+9+i*9}`,`${p.challenges[i]} / ${p.end+i*9}${i===3?'+':'–'+(p.end+8+i*9)}`]))}<p>Personal Year ${esc(p.year)}: ${p.personalYear}</p>
+ <h2>Konversi nama</h2>${table(['Kata','Nilai huruf','Jumlah'],p.letters.map(w=>[w.word,w.values.join(' + '),w.values.reduce((a,b)=>a+b,0)]))}<p>Nama dihitung per kata. Master langsung dipertahankan; Karmic dipertahankan pada hasil akhir. Vokal A/I/U/E/O. Rentang fase mengikuti tabel masing-masing pada booklet.</p>
+ <h2>Feedback AI</h2><div class="feedback">${esc(result.text)}</div><footer>Sumber metode: Workshop Numerology Pythagoras, Rudy Gunawan, booklet 101 halaman. Interpretasi simbolik untuk refleksi, bukan asesmen ilmiah atau prediksi. AI dapat keliru.<br>Model: ${esc(result.model)} · Dibuat: ${esc(result.generatedAt)}</footer></body></html>`;
+}
+export function exportReport(p,result){
+ const frame=document.createElement('iframe');frame.title='Laporan PDF Ruang Angka';frame.style.cssText='position:fixed;width:1px;height:1px;left:-10000px;border:0';
+ frame.onload=()=>{const win=frame.contentWindow;win.addEventListener('afterprint',()=>frame.remove(),{once:true});win.focus();win.print()};frame.srcdoc=reportHTML(p,result);document.body.appendChild(frame);
+}
