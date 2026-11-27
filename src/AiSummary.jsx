@@ -8,7 +8,7 @@ export default function AiSummary({profile}){
  useEffect(()=>summaryJob(payload).subscribe(setState),[key,attempt]);
  return <section className="panel ai-panel" aria-busy={state.loading}>
  <div className="section-heading"><span className="eyebrow">Summary dalam diri kamu</span><h2>Memahami cerita di balik angkamu.</h2></div>
- <p className="note">AI otomatis menerima angka tanpa nama dan tanggal lahir. Pada Free tier, Google dapat memakai konten untuk meningkatkan produknya.</p>
+ <p className="note">Summary untuk mengenal dirimu lebih dalam lagi!</p>
  <p className="ai-status" role="status"><span className={state.loading?'pulse-dot':''}/>{state.loading?(state.text?'Sedang menulis penjelasan…':'Angka siap. Menghubungkan ke Gemini…'):state.error?'Ringkasan belum selesai':'Ringkasan selesai'}</p>
  {state.text&&<div className="ai-result"><div className="ai-text">{state.text}</div></div>}
  {state.error&&<p role="alert" className="error ai-error">{state.error}</p>}
